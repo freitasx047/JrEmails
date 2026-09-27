@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JR Emails — correspondência temporária</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='47' fill='%23000' stroke='%23fff' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23fff' text-anchor='middle'%3EJR%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --paper: #141414;
+      --paper-2: #191919;
+      --line: rgba(255, 255, 255, 0.14);
+      --line-soft: rgba(255, 255, 255, 0.07);
+      --ink: #F3F2EE;
+      --ink-dim: #9A9A94;
+      --ink-faint: #65655F;
+      --link: #5B93FF;
+      --danger: #E2694F;
+      --radius: 2px;
+      --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(5, 5, 5, 0.35) 0%, rgba(5, 5, 5, 0.72) 60%, rgba(5, 5, 5, 0.92) 100%),
+        url('background.png') center center / cover no-repeat fixed,
+        var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      position: relative;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 64px 20px 90px;
+    }
+
+    /* ---------- cabeçalho / selo ---------- */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .seal {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 15px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .rule {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+      margin: 0 auto 36px;
+      max-width: 340px;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 29px;
+      line-height: 1.3;
+      text-align: center;
+      margin: 0 0 10px;
+      letter-spacing: -0.005em;
+    }
+
+    .sub {
+      color: var(--ink-dim);
+      font-size: 14.5px;
+      text-align: center;
+      margin: 0 0 40px;
+      line-height: 1.6;
+    }
+
+    /* ---------- cartão do endereço ---------- */
+    .card {
+      background: linear-gradient(180deg, var(--paper-2), var(--paper));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px 24px 20px;
+      margin-bottom: 32px;
+      box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin: 0 0 10px;
+    }
+
+    .addr-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .addr {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--line-soft);
+      border-radius: 2px;
+      padding: 13px 14px;
+      overflow-x: auto;
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .addr.placeholder {
+      color: var(--ink-faint);
+      user-select: none;
+    }
+
+    .icon-btn {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 2px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+
+    .icon-btn:hover {
+      color: var(--ink);
+      border-color: var(--ink-dim);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.96);
+    }
+
+    .icon-btn:focus-visible,
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 1.5px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    .icon-btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .icon-btn.copied {
+      color: var(--bg);
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    /* contagem regressiva */
+    .fuse-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--ink-faint);
+    }
+
+    .fuse-track {
+      position: relative;
+      flex: 1;
+      height: 3px;
+      margin: 0 12px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .fuse-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 100%;
+      background: var(--ink);
+      transition: width 1s linear;
+    }
+
+    .fuse-time {
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-dim);
+      min-width: 44px;
+      text-align: right;
+    }
+
+    /* ---------- controles de geração ---------- */
+    .gen-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    input[type="text"],
+    select {
+      font-family: var(--mono);
+      font-size: 13.5px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--line-soft);
+      color: var(--ink);
+      border-radius: 2px;
+      padding: 11px 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input[type="text"]::placeholder {
+      color: var(--ink-faint);
+    }
+
+    select {
+      max-width: 180px;
+    }
+
+    .btn {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 13.5px;
+      letter-spacing: 0.02em;
+      border-radius: 2px;
+      padding: 11px 20px;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      transition: filter .15s ease, transform .1s ease, background .15s ease, color .15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(0.9);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--ink-dim);
+    }
+
+    .btn-ghost:hover {
+      color: var(--ink);
+      border-color: var(--ink-dim);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--ink-faint);
+      margin-top: 11px;
+    }
+
+    .error {
+      font-size: 13px;
+      color: var(--danger);
+      margin-top: 11px;
+      display: none;
+    }
+
+    /* ---------- inbox ---------- */
+    .inbox-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .inbox-head h2 {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--ink-faint);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .poll-state {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--ink-faint);
+    }
+
+    .dot.live {
+      background: var(--ink);
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, .4);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, .35);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+      }
+    }
+
+    .empty {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 44px 24px;
+      text-align: center;
+      color: var(--ink-faint);
+      font-size: 13.5px;
+      line-height: 1.7;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .empty svg {
+      width: 30px;
+      height: 30px;
+      margin-bottom: 14px;
+      opacity: 0.5;
+    }
+
+    .mail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--line-soft);
+    }
+
+    .mail {
+      background: var(--paper);
+      overflow: hidden;
+      animation: drop .3s ease;
+    }
+
+    @keyframes drop {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .mail-head {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 15px 16px;
+      cursor: pointer;
+    }
+
+    .mail-head:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .mail-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .mail-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mail-from {
+      font-size: 12px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mail-subject {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink);
+      font-family: var(--serif);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mail-chevron {
+      width: 14px;
+      height: 14px;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      transition: transform .18s ease;
+    }
+
+    .mail.open .mail-chevron {
+      transform: rotate(90deg);
+    }
+
+    .mail-body {
+      display: none;
+      padding: 0 16px 20px 35px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--ink);
+      white-space: pre-wrap;
+      word-break: break-word;
+      border-top: 1px solid var(--line-soft);
+      padding-top: 15px;
+    }
+
+    .mail.open .mail-body {
+      display: block;
+    }
+
+    .mail-body a {
+      color: var(--link);
+      text-decoration: underline;
+      text-decoration-color: rgba(91, 147, 255, 0.45);
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+
+    .mail-body a:hover {
+      text-decoration-color: var(--link);
+    }
+
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      letter-spacing: 0.04em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    @media (max-width:480px) {
+      h1 {
+        font-size: 23px;
+      }
+
+      .addr {
+        font-size: 13.5px;
+      }
+
+      .brand-name {
+        font-size: 13px;
+        letter-spacing: 0.24em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="brand">
+      <div class="seal">JR</div>
+      <span class="brand-name">JR Emails</span>
+    </div>
+    <div class="rule"></div>
+
+    <h1>Correspondência que não deixa endereço.</h1>
+    <p class="sub">Um e-mail temporário, sem cadastro. Receba, leia, e deixe que desapareça.</p>
+
+    <!-- Cartão do endereço -->
+    <div class="card">
+      <p class="card-label">Seu endereço</p>
+      <div class="addr-row">
+        <div class="addr placeholder" id="addrText">nenhum endereço gerado ainda</div>
+        <button class="icon-btn" id="copyBtn" title="Copiar endereço" aria-label="Copiar endereço" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        </button>
+        <button class="icon-btn" id="deleteBtn" title="Apagar caixa" aria-label="Apagar caixa" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M3 6h18" />
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="fuse-row" id="fuseRow" style="display:none;">
+        <span>expira em</span>
+        <div class="fuse-track">
+          <div class="fuse-fill" id="fuseFill"></div>
+        </div>
+        <span class="fuse-time" id="fuseTime">--:--</span>
+      </div>
+
+      <div class="gen-row" id="genRow">
+        <input type="text" id="usernameInput" placeholder="nome-de-usuário (opcional)" />
+        <select id="domainSelect">
+          <option value="">domínio aleatório</option>
+        </select>
+        <button class="btn btn-primary" id="generateBtn">Gerar e-mail</button>
+      </div>
+      <p class="hint">Deixe o nome em branco para receber um endereço totalmente aleatório.</p>
+      <p class="error" id="errorMsg"></p>
+    </div>
+
+    <!-- Caixa de entrada -->
+    <div class="inbox-head">
+      <h2>Caixa de entrada</h2>
+      <div class="poll-state"><span class="dot" id="pollDot"></span><span id="pollLabel">parado</span></div>
+    </div>
+
+    <div id="inboxArea">
+      <div class="empty" id="emptyState">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg><br />
+        Gere um endereço acima. Assim que uma mensagem chegar, ela aparece aqui — sem precisar recarregar a página.
+      </div>
+      <div class="mail-list" id="mailList"></div>
+    </div>
+
+    <footer>JR Emails — cliente independente, não afiliado a nenhum provedor de e-mail de terceiros</footer>
+  </div>
+
+  <script>
+    (() => {
+      // Front-end e API vivem no mesmo domínio na Vercel.
+      const API_BASE = '';
+
+      // Sessão simples guardada no navegador (mesma lógica do server.js original).
+      let sessionId = localStorage.getItem('santa_emails_sid');
+      if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        localStorage.setItem('santa_emails_sid', sessionId);
+      }
+
+      function api(path, options = {}) {
+        return fetch(API_BASE + path, {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            'X-Session-Id': sessionId,
+          },
+        });
+      }
+
+      const $ = (id) => document.getElementById(id);
+      const addrText = $('addrText');
+      const copyBtn = $('copyBtn');
+      const deleteBtn = $('deleteBtn');
+      const genRow = $('genRow');
+      const generateBtn = $('generateBtn');
+      const usernameInput = $('usernameInput');
+      const domainSelect = $('domainSelect');
+      const errorMsg = $('errorMsg');
+      const fuseRow = $('fuseRow');
+      const fuseFill = $('fuseFill');
+      const fuseTime = $('fuseTime');
+      const emptyState = $('emptyState');
+      const mailList = $('mailList');
+      const pollDot = $('pollDot');
+      const pollLabel = $('pollLabel');
+
+      let expiresAt = null;
+      let pollTimer = null;
+      let fuseTimer = null;
+      const seen = new Set();
+
+      const POLL_MS = 10_000;
+
+      function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.style.display = msg ? 'block' : 'none';
+      }
+
+      // ---------- linkificação segura (escapa HTML antes de inserir links) ----------
+      function escapeHtml(str) {
+        return str.replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+      }
+
+      function linkify(rawText) {
+        const escaped = escapeHtml(rawText || '');
+        // qualquer URL https:// vira link azul clicável, abrindo em nova aba
+        return escaped.replace(/(https:\/\/[^\s<>"']+)/g, (url) => {
+          const clean = url.replace(/[.,;:!?)]+$/, ''); // não engole pontuação no final
+          const trailing = url.slice(clean.length);
+          return `<a href="${clean}" target="_blank" rel="noopener noreferrer">${clean}</a>${trailing}`;
+        });
+      }
+
+      // ---------- endereço / cópia / expiração ----------
+      function setAddress(email, expires) {
+        expiresAt = expires || null;
+        if (email) {
+          addrText.textContent = email;
+          addrText.classList.remove('placeholder');
+          copyBtn.disabled = false;
+          deleteBtn.disabled = false;
+          genRow.style.display = 'none';
+        } else {
+          addrText.textContent = 'nenhum endereço gerado ainda';
+          addrText.classList.add('placeholder');
+          copyBtn.disabled = true;
+          deleteBtn.disabled = true;
+          genRow.style.display = 'flex';
+        }
+        updateFuse();
+      }
+
+      function updateFuse() {
+        if (!expiresAt) {
+          fuseRow.style.display = 'none';
+          return;
+        }
+        fuseRow.style.display = 'flex';
+        const totalGuess = 20 * 60; // barra calibrada para janelas típicas de ~20min
+        const remaining = expiresAt - Math.floor(Date.now() / 1000);
+        if (remaining <= 0) {
+          fuseTime.textContent = 'expirado';
+          fuseFill.style.width = '0%';
+          return;
+        }
+        const pct = Math.max(0, Math.min(100, (remaining / totalGuess) * 100));
+        fuseFill.style.width = pct + '%';
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        fuseTime.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+      }
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(addrText.textContent);
+          copyBtn.classList.add('copied');
+          setTimeout(() => copyBtn.classList.remove('copied'), 1200);
+        } catch {
+          showError('Não foi possível copiar automaticamente — selecione o texto manualmente.');
+        }
+      });
+
+      deleteBtn.addEventListener('click', async () => {
+        stopPolling();
+        try {
+          await api('/api/mailbox', { method: 'DELETE' });
+        } catch { }
+        seen.clear();
+        mailList.innerHTML = '';
+        emptyState.style.display = 'block';
+        setAddress(null, null);
+      });
+
+      // ---------- geração ----------
+      async function loadDomains() {
+        try {
+          const res = await api('/api/domains');
+          const data = await res.json();
+          if (data.success && Array.isArray(data.domains)) {
+            for (const d of data.domains) {
+              const opt = document.createElement('option');
+              opt.value = d; opt.textContent = '@' + d;
+              domainSelect.appendChild(opt);
+            }
+          }
+        } catch {
+          /* silencioso: geração aleatória ainda funciona sem essa lista */
+        }
+      }
+
+      generateBtn.addEventListener('click', async () => {
+        showError('');
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Gerando…';
+        try {
+          const body = {
+            username: usernameInput.value.trim(),
+            domain: domainSelect.value,
+          };
+          const res = await api('/api/mailbox', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!data.success) throw new Error(data.error || 'Falha ao gerar e-mail');
+          setAddress(data.mailbox.email_address, data.mailbox.expires_at);
+          seen.clear();
+          mailList.innerHTML = '';
+          emptyState.style.display = 'block';
+          startPolling();
+        } catch (err) {
+          showError(err.message);
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.textContent = 'Gerar e-mail';
+        }
+      });
+
+      // ---------- caixa de entrada ----------
+      function renderMail(email) {
+        emptyState.style.display = 'none';
+
+        const el = document.createElement('div');
+        el.className = 'mail';
+
+        const from = escapeHtml(email.from || 'remetente desconhecido');
+        const subject = escapeHtml(email.subject || '(sem assunto)');
+        const bodyHtml = linkify(email.content?.plaintext || '(mensagem sem conteúdo de texto)');
+
+        el.innerHTML = `
+      <div class="mail-head">
+        <span class="mail-dot"></span>
+        <div class="mail-meta">
+          <div class="mail-subject">${subject}</div>
+          <div class="mail-from">${from}</div>
+        </div>
+        <svg class="mail-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="mail-body">${bodyHtml}</div>
+    `;
+
+        el.querySelector('.mail-head').addEventListener('click', () => {
+          el.classList.toggle('open');
+        });
+
+        mailList.prepend(el);
+      }
+
+      async function pollEmails() {
+        pollDot.classList.add('live');
+        pollLabel.textContent = 'monitorando';
+        try {
+          const res = await api('/api/emails');
+          const data = await res.json();
+          if (data.success && Array.isArray(data.emails)) {
+            for (const email of data.emails) {
+              const id = `${email.from}-${email.subject}-${email.expires_at}`;
+              if (!seen.has(id)) {
+                seen.add(id);
+                renderMail(email);
+              }
+            }
+          }
+        } catch {
+          pollLabel.textContent = 'erro na checagem';
+        }
+      }
+
+      function startPolling() {
+        stopPolling();
+        pollEmails();
+        pollTimer = setInterval(pollEmails, POLL_MS);
+        fuseTimer = setInterval(updateFuse, 1000);
+      }
+
+      function stopPolling() {
+        if (pollTimer) clearInterval(pollTimer);
+        if (fuseTimer) clearInterval(fuseTimer);
+        pollTimer = null;
+        fuseTimer = null;
+        pollDot.classList.remove('live');
+        pollLabel.textContent = 'parado';
+      }
+
+      // ---------- inicialização ----------
+      (async function init() {
+        loadDomains();
+        try {
+          const res = await api('/api/mailbox');
+          const data = await res.json();
+          if (data.success && data.email) {
+            setAddress(data.email, data.expires_at);
+            startPolling();
+            return;
+          }
+        } catch { }
+        setAddress(null, null);
+      })();
+    })();
+  </script>
+</body>
+
+</html>

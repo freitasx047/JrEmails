@@ -1,0 +1,9 @@
+{
+  "name": "jr-emails",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Cliente de e-mail temporário (frontend estático + funções serverless na Vercel).",
+  "engines": {
+    "node": ">=18"
+  }
+}
